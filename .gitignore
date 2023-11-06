@@ -1,0 +1,4 @@
+llama.cpp-master
+*.log
+work/*
+!work/.gitkeep
