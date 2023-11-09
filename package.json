@@ -4,7 +4,9 @@
   "main": "index.js",
   "license": "MIT",
   "type": "module",
-  "dependencies": {},
+  "dependencies": {
+    "node-fetch": "^2.7.0"
+  },
   "scripts": {
     "start": "node index.js",
     "start:agent": "DORA_AGENT_HOST=localhost:3091 node agent/index.cjs",

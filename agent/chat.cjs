@@ -11,27 +11,32 @@ class Chat extends EventEmitter {
     this.closetimer = 0
     this.answertime = 300
     this.closetime = 10000
-    this.next = 0
     this.prompttext = ""
+    this.ready = true
   }
 
   downout(time) {
     if (this.closetimer) clearTimeout(this.closetimer)
+    this.closetimer = 0
     this.closetimer = setTimeout(() => {
       this.proc = null
+      this.ready = true
       this.emit("close")
     }, time)
   }
 
   timeout(time) {
     if (this.answertimer) clearTimeout(this.answertimer)
+    this.answertimer = 0
     this.answertimer = setTimeout(() => {
       this.message = ""
+      this.ready = true
       this.emit("end")
     }, time)
   }
 
   launch() {
+    this.ready = false
     if (!this.proc) {
       this.proc = child_process.spawn(this.scriptpath)
 
@@ -54,18 +59,21 @@ class Chat extends EventEmitter {
 
   write(text) {
     this.launch()
-    const ask = `[INST]<<SYS>>あなたは賢い日本人のアシスタントです。<</SYS>>${text}[/INST]`
+    const ask = `[INST]<<SYS>>あなたは日本語で答える賢い日本人のアシスタントです。<</SYS>>${text}[/INST]`
     if (this.proc) {
       this.prompttext = ask
       this.proc.stdin.write(this.prompttext + "\n");
+      this.downout(this.closetime)
+    } else {
       this.downout(this.closetime)
     }
     return ask
   }
 
   ask(text) {
-    this.next = 1
-    this.write(text)
+    if (this.ready) {
+      this.write(text)
+    }
   }
 
   parse() {

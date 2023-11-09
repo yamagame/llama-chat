@@ -1,26 +1,33 @@
+const EventEmitter = require("events")
 const readline = require("readline")
 
-class Prompt {
+class Prompt extends EventEmitter {
+  constructor() {
+    super()
+  }
+
   prompt() {
     console.log(new Date())
     console.log("")
     process.stdout.write("> ")
   }
 
-  run(chat) {
+  run() {
     const r = readline.createInterface({
       input: process.stdin,
       terminal: false,
     });
     this.prompt()
+    this.emit("start")
 
     r.on("line", (line) => {
       console.log(new Date())
-      chat.ask(line)
+      this.emit("line", line)
     });
 
     r.on("close", () => {
       console.log(JSON.stringify(result));
+      this.emit("close")
     });
   }
 }

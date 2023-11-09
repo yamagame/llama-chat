@@ -2,3 +2,4 @@ llama.cpp-master
 *.log
 work/*
 !work/.gitkeep
+node_modules
