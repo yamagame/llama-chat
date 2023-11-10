@@ -20,8 +20,10 @@ class Chat extends EventEmitter {
     this.closetimer = 0
     this.closetimer = setTimeout(() => {
       this.proc = null
-      this.ready = true
-      this.emit("close")
+      if (!this.ready) {
+        this.ready = true
+        this.emit("close")
+      }
     }, time)
   }
 
@@ -30,8 +32,10 @@ class Chat extends EventEmitter {
     this.answertimer = 0
     this.answertimer = setTimeout(() => {
       this.message = ""
-      this.ready = true
-      this.emit("end")
+      if (!this.ready) {
+        this.ready = true
+        this.emit("end")
+      }
     }, time)
   }
 

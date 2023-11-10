@@ -2,8 +2,9 @@ const EventEmitter = require("events")
 const child_process = require("child_process")
 
 class Speech extends EventEmitter {
-  constructor() {
+  constructor({ script }) {
     super()
+    this.script = script
     this._speaking = false
     this.messages = []
   }
@@ -20,9 +21,9 @@ class Speech extends EventEmitter {
         if (this.messages.length > 0) {
           this._speaking = true
           const text = this.messages.shift()
-          child_process.exec(`./scripts/utterance.sh "${text.replaceAll(",", "")}"`, (err, stdout, stderr) => {
+          child_process.exec(`${this.script} "${text.replaceAll(",", "")}"`, (err, stdout, stderr) => {
             if (err) {
-              console.log(`stderr: ${stderr}`)
+              console.log(`stderr: ${err}`)
               this.messages.splice(0)
               this._speaking = false
               this.emit("end")

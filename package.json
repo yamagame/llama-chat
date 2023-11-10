@@ -9,7 +9,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "start:agent": "DORA_AGENT_HOST=localhost:3091 node agent/index.cjs",
+    "agent": "node agent/index.cjs",
+    "agent:utter": "VOICE_RECORDER_HOST=http://localhost:3093 UTTERANCE_SCRIPT=./scripts/utterance.sh node agent/index.cjs",
     "test": "node test.js"
   }
 }

@@ -6,6 +6,7 @@ const fetch = require("node-fetch")
 
 const PORT = process.env["AGENT_PORT"] || 3092
 const VOICE_RECORDER_HOST = process.env["VOICE_RECORDER_HOST"] || ""
+const UTTERANCE_SCRIPT = process.env["UTTERANCE_SCRIPT"] || ""
 
 // 音声認識開始
 async function listen() {
@@ -70,16 +71,28 @@ function server(chat, PORT) {
 }
 
 async function main() {
-  const speech = new Speech()
+  const speech = new Speech({ script: UTTERANCE_SCRIPT })
   const prompt = new Prompt()
 
   const chat = new Chat({ scriptpath: "./scripts/elyza-chat.sh" })
+
+  chat.on("end", () => {
+    prompt.prompt()
+    listen()
+  })
+
+  chat.on("close", () => {
+    prompt.prompt()
+    listen()
+  })
 
   // LLM応答
   chat.on("data", ({ text }) => {
     console.log(":", text)
     // 発話
-    speech.utter(text)
+    if (UTTERANCE_SCRIPT !== "") {
+      speech.utter(text)
+    }
   })
 
   // 発話終了

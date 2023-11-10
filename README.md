@@ -70,7 +70,7 @@ dora-agent が稼働しているホストは環境変数 DORA_AGENT_HOST で指�
 実行には、[Node.js](https://nodejs.org/en) v16 以降が必要です。
 
 ```sh
-$ DORA_AGENT_HOST=localhost:3091 node agent/index.cjs                                          
+$ node agent/index.cjs
 llama-chat-agent listening on port 3092!
 2023-11-09T23:46:41.075Z
 
