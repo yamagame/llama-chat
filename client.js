@@ -32,6 +32,7 @@ socket.on("reset", (payload, callback) => {
 
 socket.on("ask", (payload, callback) => {
   console.log(payload)
+  messages.splice(0)
 
   chat.removeAllListeners()
 
