@@ -3,3 +3,4 @@ llama.cpp-master
 work/*
 !work/.gitkeep
 node_modules
+.DS_Store
