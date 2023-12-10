@@ -2,7 +2,7 @@ import io from "socket.io-client";
 import child_process from "child_process"
 import { Chat } from "./agent/chat.cjs"
 
-const PORT = process.env.DORA_ENGINE_HOST || 3080
+const PORT = process.env.DORA_ENGINE_HOST || 3090
 
 const socket = io.connect(`ws://localhost:${PORT}/chat`, {
   // auth: {
