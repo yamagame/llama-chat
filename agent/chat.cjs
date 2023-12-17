@@ -15,26 +15,33 @@ class Chat extends EventEmitter {
     this.ready = true
   }
 
-  downout(time) {
+  clear() {
     if (this.closetimer) clearTimeout(this.closetimer)
+    if (this.answertimer) clearTimeout(this.answertimer)
     this.closetimer = 0
-    this.closetimer = setTimeout(() => {
-      this.proc = null
-      if (!this.ready) {
-        this.ready = true
-        this.emit("close")
-      }
-    }, time)
+    this.answertimer = 0
   }
 
   timeout(time) {
     if (this.answertimer) clearTimeout(this.answertimer)
-    this.answertimer = 0
     this.answertimer = setTimeout(() => {
+      this.answertimer = 0
       this.message = ""
       if (!this.ready) {
         this.ready = true
         this.emit("end")
+      }
+    }, time)
+  }
+
+  downout(time) {
+    if (this.closetimer) clearTimeout(this.closetimer)
+    this.closetimer = setTimeout(() => {
+      this.closetimer = 0
+      this.proc = null
+      if (!this.ready) {
+        this.ready = true
+        this.emit("close")
       }
     }, time)
   }
@@ -45,9 +52,13 @@ class Chat extends EventEmitter {
       this.proc = child_process.spawn(this.scriptpath)
 
       this.proc.stdout.on('data', (chunk) => {
-        const text = chunk.toString()
-        this.message += text
-        this.parse()
+        try {
+          const text = chunk.toString()
+          this.message += text
+          this.parse()
+        } catch (err) {
+          console.error(err)
+        }
         this.timeout(this.answertime)
         this.downout(this.closetime)
       })
@@ -57,20 +68,22 @@ class Chat extends EventEmitter {
       })
 
       this.timeout(this.closetime)
-      this.downout(this.closetime)
     }
   }
 
+  prompt(text) {
+    return `[INST]<<SYS>>あなたは日本語で答える賢い日本人のアシスタントです。<</SYS>>${text}[/INST]`
+  }
+
   write(text) {
+    this.clear()
     this.launch()
-    const ask = `[INST]<<SYS>>あなたは日本語で答える賢い日本人のアシスタントです。<</SYS>>${text}[/INST]`
+    const ask = this.prompt(text)
     if (this.proc) {
       this.prompttext = ask
       this.proc.stdin.write(this.prompttext + "\n");
-      this.downout(this.closetime)
-    } else {
-      this.downout(this.closetime)
     }
+    this.downout(this.closetime)
     return ask
   }
 
